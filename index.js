@@ -63,31 +63,33 @@ const axios = require('axios');
             resolve();
         });
     };
-    try {
-        await migrationUp();
-        
-        const {data} = await axios.get("https://datausa.io/api/data?drilldowns=Nation&measures=Population", {
+
+    const fetchData = async () => {
+        const response = await axios.get("https://datausa.io/api/data?drilldowns=Nation&measures=Population", {
             timeout: 6000,
         })
-        console.log('datatest', data.data);
-
-        // //exemplo de insert
-        // const result1 = await db[DATABASE_SCHEMA].api_data.insert({
-        //     doc_record: { 'a': 'b' },
-        // })
-        // console.log('result1 >>>', result1);
-
-        // //exemplo select
-        // const result2 = await db[DATABASE_SCHEMA].api_data.find({
-        //     is_active: true
-        // });
-        // console.log('result2 >>>', result2);
-        // await db[DATABASE_SCHEMA].api_data.destroy({})
+        await db[DATABASE_SCHEMA].api_data.destroy({})
+        const data = response.data.data
+        console.log(data, 'teste')
+        data.map(obj => {
+            db[DATABASE_SCHEMA].api_data.insert({
+                doc_record: obj
+            })
+        })
+    }
+    try {
+        await migrationUp();
+        // 1. Consumir a API (https://datausa.io/api/data?drilldowns=Nation&measures=Population) e gravar o resultado na tabela "api_data" no na coluna "doc_record".
+        await fetchData()
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+    
         
     } catch (e) {
         console.log(e.message)
     } finally {
         console.log('db', await db[DATABASE_SCHEMA].api_data.find({}));
+        console.log('count ', await db[DATABASE_SCHEMA].api_data.count());
         console.log('finally');
     }
     console.log('main.js: after start');
