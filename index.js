@@ -100,15 +100,15 @@ const axios = require('axios');
     } catch (e) {
         console.log(e.message)
     } finally {
-//         2. Realizar a somatoria da propriedade "Population" dos anos 2020, 2019 e 2018 e appresentar o resultado no console.
-// Implementar de duas formas o algoritmo:
+        //         2. Realizar a somatoria da propriedade "Population" dos anos 2020, 2019 e 2018 e appresentar o resultado no console.
+        // Implementar de duas formas o algoritmo:
 
-//     a. em memoria no nodejs usando map, filter, for etc
+        //     a. em memoria no nodejs usando map, filter, for etc
         await sumOfoPopulationNode();
-// ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
         // b. usando SELECT no postgres, pode fazer um SELECT inline no nodejs.
        await sumOfPopulationInline();
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------    
+        // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------    
         console.log('count ', await db[DATABASE_SCHEMA].api_data.count());
         console.log('finally');
     }
