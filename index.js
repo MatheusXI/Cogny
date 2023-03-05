@@ -1,10 +1,12 @@
 const { DATABASE_SCHEMA, DATABASE_URL, SHOW_PG_MONITOR } = require('./config');
 const massive = require('massive');
 const monitor = require('pg-monitor');
+const axios = require('axios');
 
 // Call start
 (async () => {
     console.log('main.js: before start');
+    console.log('schema',DATABASE_SCHEMA);
 
     const db = await massive({
         connectionString: DATABASE_URL,
@@ -61,25 +63,31 @@ const monitor = require('pg-monitor');
             resolve();
         });
     };
-
     try {
         await migrationUp();
-
-        //exemplo de insert
-        const result1 = await db[DATABASE_SCHEMA].api_data.insert({
-            doc_record: { 'a': 'b' },
+        
+        const {data} = await axios.get("https://datausa.io/api/data?drilldowns=Nation&measures=Population", {
+            timeout: 6000,
         })
-        console.log('result1 >>>', result1);
+        console.log('datatest', data.data);
 
-        //exemplo select
-        const result2 = await db[DATABASE_SCHEMA].api_data.find({
-            is_active: true
-        });
-        console.log('result2 >>>', result2);
+        // //exemplo de insert
+        // const result1 = await db[DATABASE_SCHEMA].api_data.insert({
+        //     doc_record: { 'a': 'b' },
+        // })
+        // console.log('result1 >>>', result1);
 
+        // //exemplo select
+        // const result2 = await db[DATABASE_SCHEMA].api_data.find({
+        //     is_active: true
+        // });
+        // console.log('result2 >>>', result2);
+        // await db[DATABASE_SCHEMA].api_data.destroy({})
+        
     } catch (e) {
         console.log(e.message)
     } finally {
+        console.log('db', await db[DATABASE_SCHEMA].api_data.find({}));
         console.log('finally');
     }
     console.log('main.js: after start');
