@@ -100,7 +100,7 @@ const axios = require('axios');
     } catch (e) {
         console.log(e.message)
     } finally {
-        //         2. Realizar a somatoria da propriedade "Population" dos anos 2020, 2019 e 2018 e appresentar o resultado no console.
+        // 2. Realizar a somatoria da propriedade "Population" dos anos 2020, 2019 e 2018 e appresentar o resultado no console.
         // Implementar de duas formas o algoritmo:
 
         //     a. em memoria no nodejs usando map, filter, for etc
