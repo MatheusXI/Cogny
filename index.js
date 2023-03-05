@@ -85,6 +85,12 @@ const axios = require('axios');
         const result = desiredData.reduce((acc, curr) => acc += curr.doc_record.Population, 0);
         console.log("soma", result);
     }
+
+    const sumOfPopulationInline = async () => {
+        const sqlSum = `SELECT SUM((doc_record ->> 'Population')::int) AS sum FROM ${DATABASE_SCHEMA}.api_data WHERE doc_record->> 'Year' IN ('2020', '2019', '2018');`
+        const teste = await db.query(sqlSum)
+        console.log('result view', teste);
+    }
     try {
         await migrationUp();
         // 1. Consumir a API (https://datausa.io/api/data?drilldowns=Nation&measures=Population) e gravar o resultado na tabela "api_data" no na coluna "doc_record".
@@ -96,15 +102,13 @@ const axios = require('axios');
     } finally {
 //         2. Realizar a somatoria da propriedade "Population" dos anos 2020, 2019 e 2018 e appresentar o resultado no console.
 // Implementar de duas formas o algoritmo:
+
 //     a. em memoria no nodejs usando map, filter, for etc
-        await sumOfoPopulationNode()
+        await sumOfoPopulationNode();
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-        // await db.createView('result-view', {
-        //     sql: `SELECT SUM((doc_record ->> 'Population')::int) AS sum FROM ${DATABASE_SCHEMA.api_data};`
-        // })
-       const sqlSum = `SELECT SUM((doc_record ->> 'Population')::int) AS sum FROM ${DATABASE_SCHEMA}.api_data WHERE doc_record->> 'Year' IN ('2020', '2019', '2018');`
-       const teste = await db.query(sqlSum)
-        console.log('result view', teste);
+        // b. usando SELECT no postgres, pode fazer um SELECT inline no nodejs.
+       await sumOfPopulationInline();
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------    
         console.log('count ', await db[DATABASE_SCHEMA].api_data.count());
         console.log('finally');
     }
